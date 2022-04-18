@@ -43,3 +43,4 @@ func New(statusCode StatusCode, statusMsg string) Operation {
 }
 
 var OkOperation = New(Ok, OkStatusMsg)
+var BadArgsOperation = New(BadArgs, BadArgsMsg)
