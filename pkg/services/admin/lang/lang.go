@@ -10,17 +10,17 @@ type CreateLangArgs struct {
 	Code string
 	Name string
 }
-type GetLangsItem struct {
+type GetLangItem struct {
 	LangId   int
 	LangCode string
 	LangName string
 }
-type LangService interface {
+type AdminLangSrv interface {
 	CreateLang(args *CreateLangArgs) error
-	GetLangList() (res []GetLangsItem, err error)
+	GetLangList() (res []GetLangItem, err error)
 }
 
-func NewService(repo repos.LangRepo) LangService {
+func NewService(repo repos.LangRepo) AdminLangSrv {
 	return &impl{repo}
 }
 
@@ -41,14 +41,14 @@ func (i *impl) CreateLang(args *CreateLangArgs) error {
 	}
 	return nil
 }
-func (i *impl) GetLangList() ([]GetLangsItem, error) {
+func (i *impl) GetLangList() ([]GetLangItem, error) {
 	items, err := i.repo.GetAllLang()
 	if err != nil {
 		return nil, nil
 	}
-	var res []GetLangsItem
-	for i, v := range items {
-		res = append(res, GetLangsItem{
+	var res []GetLangItem
+	for _, v := range items {
+		res = append(res, GetLangItem{
 			LangId:   v.Id,
 			LangCode: v.Code,
 			LangName: v.Name,
