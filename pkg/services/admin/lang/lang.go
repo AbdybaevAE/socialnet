@@ -1,6 +1,10 @@
 package lang
 
-import "github.com/abdybaevae/socialnet/pkg/entities"
+import (
+	"github.com/abdybaevae/socialnet/pkg/entities"
+	"github.com/abdybaevae/socialnet/pkg/lib/op"
+	"github.com/abdybaevae/socialnet/pkg/repos"
+)
 
 type CreateLangArgs struct {
 	Code string
@@ -11,29 +15,44 @@ type GetLangsItem struct {
 	LangCode string
 	LangName string
 }
-type Service interface {
+type LangService interface {
 	CreateLang(args *CreateLangArgs) error
-	GetLangList() []GetLangsItem
+	GetLangList() (res []GetLangsItem, err error)
 }
 
-func NewService() Service {
-	return &impl{}
+func NewService(repo repos.LangRepo) LangService {
+	return &impl{repo}
 }
 
 type impl struct {
+	repo repos.LangRepo
 }
 
 func (i *impl) CreateLang(args *CreateLangArgs) error {
-	if len(args.Code) == 0 || len(args.Name) {
-		return
+	if len(args.Code) == 0 || len(args.Name) == 0 {
+		return op.BadArgsOp
 	}
-	langEntity := entities.LanguageEntity{
+	langEntity := &entities.LanguageEntity{
 		Name: args.Name,
 		Code: args.Code,
 	}
-	if
+	if err := i.repo.CreateLang(langEntity); err != nil {
+		return err
+	}
 	return nil
 }
-func (i *impl) GetLangList() (error, []GetLangsItem) {
-	return nil, nil
+func (i *impl) GetLangList() ([]GetLangsItem, error) {
+	items, err := i.repo.GetAllLang()
+	if err != nil {
+		return nil, nil
+	}
+	var res []GetLangsItem
+	for i, v := range items {
+		res = append(res, GetLangsItem{
+			LangId:   v.Id,
+			LangCode: v.Code,
+			LangName: v.Name,
+		})
+	}
+	return res, nil
 }
