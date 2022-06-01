@@ -1,46 +1,25 @@
 package op
 
-import "fmt"
+type StatusCode string
 
-type StatusCode int
-
-const (
-	OkStatusMsg     = "Successfull operation."
-	BadArgsMsg      = "BadArgsMessage"
-	DupUserEmailMsg = "Duplicate user email found."
+var (
+	BadArgs               StatusCode = "BadArgs"
+	ResourceAlreadyExists StatusCode = "BadArgs"
+	GeneralErrorCode      StatusCode = "GeneralErrorCode"
 )
 
-const (
-	Ok StatusCode = iota
-	BadArgs
-	DupUserEmail
-)
+const BadArgsMessage = "Bad arguments provided"
+const ResourceAlreadyExistsMessage = "ResourceAlreadyExists"
+const GeneralErrorMessage = "GeneralError"
 
-type Operation interface {
-	Code() StatusCode
-	error
-	Msg() string
-}
-type OperationImpl struct {
-	statusCode StatusCode
-	statusMsg  string
+type Operation struct {
+	StatusCode string `json:"statusCode"`
+	Message    string `json:"statusMessage"`
 }
 
-func (o *OperationImpl) Code() StatusCode {
-	return o.statusCode
-}
-func (o *OperationImpl) Msg() string {
-	return o.statusMsg
-}
-func (o *OperationImpl) Error() string {
-	return fmt.Sprintf("code is %v and msg is %v", o.statusCode, o.statusMsg)
-}
-func New(statusCode StatusCode, statusMsg string) Operation {
-	return &OperationImpl{
-		statusCode: statusCode,
-		statusMsg:  statusMsg,
+func NewOperation(statusCode StatusCode, statusMessage string) *Operation {
+	return &Operation{
+		StatusCode: string(statusCode),
+		Message:    statusMessage,
 	}
 }
-
-var OkOperation = New(Ok, OkStatusMsg)
-var BadArgsOperation = New(BadArgs, BadArgsMsg)
