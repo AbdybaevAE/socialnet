@@ -10,7 +10,7 @@
 - City
 - Language
 
-### Functions
+### Functions:
 - Create posts
 - Create comments
 - Follow other users
@@ -26,6 +26,8 @@
 - Comments
 
 ## Comment
+
+Properties:
 - Text
 - Owner(User)
 - Likes
